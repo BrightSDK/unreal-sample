@@ -18,7 +18,7 @@ char* brdSDK_Version(void);
 char* brdSDK_GetUUID(void);
 int64_t brdSDK_AuthorizeDevice(void);
 int64_t brdSDK_CurrentChoice(void);
-void brdSDK_ExternalOptIn(int64_t);
+int64_t brdSDK_ExternalOptIn(int64_t);
 void brdSDK_OptOut(int64_t);
 void brdSDK_NotifyConsentShown();
 bool brdSDK_ShowConsent(const char *, const char *, const char *, const char *, int64_t);
@@ -182,10 +182,12 @@ EBrightSDKChoice UBrightSDKSubsystem::GetCurrentChoice() const
 #endif
 }
 
-void UBrightSDKSubsystem::ExternalOptIn(EBrightSDKChoiceTriggerType Trigger) const
+int64 UBrightSDKSubsystem::ExternalOptIn(EBrightSDKChoiceTriggerType Trigger) const
 {
 #ifdef APPLE_MOBILE
-    brdSDK_ExternalOptIn((int64_t)Trigger);
+    return (int64)brdSDK_ExternalOptIn((int64_t)Trigger);
+#else
+    return INT64_MIN;
 #endif
 }
 

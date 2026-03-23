@@ -66,7 +66,7 @@ public:
     EBrightSDKChoice GetCurrentChoice() const;
 
     UFUNCTION(BlueprintCallable, Category="BrightSDK")
-    void ExternalOptIn(EBrightSDKChoiceTriggerType Trigger) const;
+    int64 ExternalOptIn(EBrightSDKChoiceTriggerType Trigger) const;
 
     UFUNCTION(BlueprintCallable, Category="BrightSDK")
     void OptOut(EBrightSDKChoiceTriggerType Trigger) const;
