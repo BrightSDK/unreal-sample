@@ -230,6 +230,9 @@ OnChoiceChanged(EBrightSDKChoice NewChoice)
 
 #### TryInitialize
 
+Initializes the SDK with optional UI strings and flags.
+
+
 ```C++
 UFUNCTION(BlueprintCallable, Category="BrightSDK")
 int64 TryInitialize(const FString& Benefit,
@@ -243,12 +246,16 @@ int64 TryInitialize(const FString& Benefit,
 
 #### GetVersion
 
+Returns SDK version string.
+
 ```C++
 UFUNCTION(BlueprintCallable, Category="BrightSDK")
 FString GetVersion() const;
 ```
 
 #### GetUUIDOrEmpty
+
+Returns SDK UUID if available, otherwise empty string.
 
 ```C++
 UFUNCTION(BlueprintCallable, Category="BrightSDK")
@@ -257,12 +264,18 @@ FString GetUUIDOrEmpty() const;
 
 #### AuthorizeDevice
 
+Checks availability of running sdk on the device. It allows you to determine what you are able to do with sdk.
+
 ```C++
 UFUNCTION(BlueprintCallable, Category="BrightSDK")
 EBrightSDKAuthorizationStatus AuthorizeDevice() const;
 ```
 
+> You should check the status and decide your reaction on it before showing your custom consent screen.
+
 #### GetCurrentChoice
+
+Returns current user's consent status.
 
 ```C++
 UFUNCTION(BlueprintCallable, Category="BrightSDK")
@@ -271,12 +284,18 @@ EBrightSDKChoice GetCurrentChoice() const;
 
 #### ExternalOptIn
 
+Indicates a user has agreed with consent conditions and starts SDK processes.
+
 ```C++
 UFUNCTION(BlueprintCallable, Category="BrightSDK")
-void ExternalOptIn(EBrightSDKChoiceTriggerType Trigger) const;
+int64 ExternalOptIn(EBrightSDKChoiceTriggerType Trigger) const;
 ```
 
+> This method checks authorization status to determine the possibility of the operation. 
+
 #### OptOut
+
+Disables SDK.
 
 ```C++
 UFUNCTION(BlueprintCallable, Category="BrightSDK")
@@ -285,12 +304,18 @@ void OptOut(EBrightSDKChoiceTriggerType Trigger) const;
 
 #### NotifyConsentShown
 
+Triggers post actions when custom consent screen was shown.
+
 ```C++
 UFUNCTION(BlueprintCallable, Category="BrightSDK")
 void NotifyConsentShown() const;
 ```
 
+> When you implement a custom consent screen you must call this method when the screen is presented in, for example, **viewDidAppear**.
+
 #### ShowConsent
+
+Shows the SDK consent UI.
 
 ```C++
 UFUNCTION(BlueprintCallable, Category="BrightSDK")
@@ -298,6 +323,8 @@ bool ShowConsent() const;
 ```
 
 #### SetTrackingId
+
+Adds unique tracking id for reports and debugging.
 
 ```C++
 UFUNCTION(BlueprintCallable, Category="BrightSDK")
