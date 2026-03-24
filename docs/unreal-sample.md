@@ -176,6 +176,19 @@ void USDKWidget::HandleChoiceChanged(EBrightSDKChoice Choice)
 }
 ```
 
+## Example project
+
+Repository contains test example of SDK usage.
+
+Before running the project 
+
+1. copy `BrightSDK` folder under `Example/Plugins`
+2. download latest Bright Data SDK xcframework
+3. put the framework under `Example/ThirdParty/BrightSdk` folder
+
+Now you can open the project.
+
+
 ## API details
 
 > String conventions:
