@@ -1,5 +1,6 @@
 // LICENSE_CODE ZON
 
+using System.IO;
 using UnrealBuildTool;
 
 public class BrightSDK : ModuleRules
@@ -7,30 +8,14 @@ public class BrightSDK : ModuleRules
 	public BrightSDK(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
-		
-		PublicIncludePaths.AddRange(
-			new string[] {
-				// ... add public include paths required here ...
-			}
-			);
-				
-		
-		PrivateIncludePaths.AddRange(
-			new string[] {
-				// ... add other private include paths required here ...
-			}
-			);
-			
-		
+
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
 				"Core",
-				// ... add other public dependencies that you statically link with here ...
 			}
-			);
-			
-		
+		);
+
 		PrivateDependencyModuleNames.AddRange(
 			new string[]
 			{
@@ -38,16 +23,22 @@ public class BrightSDK : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-				// ... add private dependencies that you statically link with here ...	
 			}
+		);
+
+		string brightSdkDir = Path.GetFullPath(Path.Combine(ModuleDirectory, "../../../../ThirdParty/BrightSdk"));
+
+		if (Target.Platform == UnrealTargetPlatform.IOS || Target.Platform == UnrealTargetPlatform.TVOS)
+		{
+			PublicAdditionalFrameworks.Add(
+				new Framework(
+					"brdsdk",
+					Path.Combine(brightSdkDir, "brdsdk.xcframework"),
+					"",
+					true
+				)
 			);
-		
-		
-		DynamicallyLoadedModuleNames.AddRange(
-			new string[]
-			{
-				// ... add any modules that your module loads dynamically here ...
-			}
-			);
+		}
+
 	}
 }

@@ -45,6 +45,9 @@ public:
 
 public:
     UFUNCTION(BlueprintCallable, Category="BrightSDK")
+    void WindowsPreInit(const FString& AppId, const FString& AppName) const;
+
+    UFUNCTION(BlueprintCallable, Category="BrightSDK")
     int64 TryInitialize(const FString& Benefit,
                         const FString& AgreeButton,
                         const FString& DisagreeButton,

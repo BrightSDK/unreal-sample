@@ -2,7 +2,48 @@
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "Engine/GameInstance.h"
+#include "Misc/App.h"
 #include "BrightSDKSubsystem.h"
+
+namespace
+{
+    static FString BuildVersionLine(const FString& Version)
+    {
+        return FString::Printf(TEXT("Version: %s"), *Version);
+    }
+}
+
+void USDKWidget::RefreshSdkDetails()
+{
+    if (!sdk)
+    {
+        return;
+    }
+
+    const FString UUID = sdk->GetUUIDOrEmpty();
+    const FString VersionLine = BuildVersionLine(sdk->GetVersion());
+
+    if (UUIDLabel)
+    {
+        if (VersionLabel)
+        {
+            UUIDLabel->SetText(FText::FromString(UUID));
+        }
+        else if (UUID.IsEmpty())
+        {
+            UUIDLabel->SetText(FText::FromString(VersionLine));
+        }
+        else
+        {
+            UUIDLabel->SetText(FText::FromString(FString::Printf(TEXT("%s\n%s"), *UUID, *VersionLine)));
+        }
+    }
+
+    if (VersionLabel)
+    {
+        VersionLabel->SetText(FText::FromString(VersionLine));
+    }
+}
 
 void USDKWidget::NativeConstruct()
 {
@@ -18,6 +59,7 @@ void USDKWidget::NativeConstruct()
     {
         sdk = GI->GetSubsystem<UBrightSDKSubsystem>();
         sdk->OnChoiceChanged.AddDynamic(this, &USDKWidget::HandleChoiceChanged);
+        sdk->WindowsPreInit(TEXT("win_brightdata.electron_sample_app"), TEXT("UE SDK Example"));
         sdk->TryInitialize(TEXT("THIS IS TEST BENEFIT"),
                            TEXT("ACCEPT"),
                            TEXT("DECLINE"),
@@ -25,7 +67,7 @@ void USDKWidget::NativeConstruct()
                            TEXT(""),
                            false,
                            TEXT(""));
-        UUIDLabel->SetText(FText::FromString(sdk->GetUUIDOrEmpty()));
+        RefreshSdkDetails();
         HandleChoiceChanged(sdk->GetCurrentChoice());
     }
 }

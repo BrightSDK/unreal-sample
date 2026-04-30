@@ -2,11 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "BrightSDKSubsystem.h"
 #include "SDKWidget.generated.h"
 
 class UButton;
 class UTextBlock;
-class UBrightSDKSubsystem;
 
 UCLASS()
 class EXAMPLE_API USDKWidget : public UUserWidget
@@ -15,6 +15,7 @@ class EXAMPLE_API USDKWidget : public UUserWidget
 
 protected:
     virtual void NativeConstruct() override;
+    void RefreshSdkDetails();
 
     UFUNCTION()
     void OnShowConsentButtonClicked();
@@ -30,6 +31,8 @@ protected:
 
     UPROPERTY(meta = (BindWidget))
     UTextBlock* UUIDLabel;
+    UPROPERTY(meta = (BindWidgetOptional))
+    UTextBlock* VersionLabel;
     UPROPERTY(meta = (BindWidget))
     UTextBlock* ChoiceLabel;
     UPROPERTY(meta = (BindWidget))

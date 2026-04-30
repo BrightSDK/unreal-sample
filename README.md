@@ -2,7 +2,9 @@
 
 ## Overview
 
-Unreal Engine plugin that bridges BrightSDK iOS/tvOS Swift SDK (distributed as .xcframework) into Unreal using a C-compatible API (`@_cdecl`).
+Unreal Engine plugin that bridges BrightSDK  into Unreal using a C-compatible API (`@_cdecl`):
+- iOS/tvOS Swift SDK (distributed as .xcframework)
+- Win64 SDK (distributed as lum_sdk64.dll/net_updater64.exe)
 
 The plugin exposes a UGameInstanceSubsystem (UBrightSDKSubsystem) that you can call from both C++ and Blueprints.
 
@@ -13,7 +15,8 @@ Branch: main
 
 - Unreal Engine 5.x (tested with UE 5.7)
 - macOS + Xcode (for iOS/tvOS builds)
-- iOS/tvOS Bright Data SDK as brdsdk.xcframework
+- iOS/tvOS Bright Data SDK as brdsdk.xcframework (for iOS/tvOS builds)
+- Bright Data Windows C/C++ SDK as lum_sdk64.dll/net_updater64.exe (for Windows builds)
 
 ## Current Repository State
 
@@ -86,6 +89,35 @@ if (Target.Platform == UnrealTargetPlatform.IOS)
             true
         )
     );
+}
+```
+
+### Add Windows SDK files
+
+1. Place `lum_sdk64.dll` and `net_updater64.exe` in any folder you want inside or outside the project. Both files need to be in the same folder.
+
+2. In your project module `Build.cs`, stage that DLL into the target output directory.
+
+`Source/<YourProject>/<YourProject>.Build.cs`
+
+```C#
+using System.IO;
+
+public class YourProject : ModuleRules
+{
+    public YourProject(ReadOnlyTargetRules Target) : base(Target)
+    {
+        if (Target.Platform == UnrealTargetPlatform.Win64)
+        {
+            string brightSdkDir = Path.GetFullPath(Path.Combine(ModuleDirectory, "../../ThirdParty/BrightSdk"));
+            string win64Dll = Path.Combine(brightSdkDir, "lum_sdk64.dll");
+
+            if (File.Exists(win64Dll))
+            {
+                RuntimeDependencies.Add("$(TargetOutputDir)/lum_sdk64.dll", win64Dll);
+            }
+        }
+    }
 }
 ```
 
@@ -185,6 +217,7 @@ Before running the project
 1. copy `BrightSDK` folder under `Example/Plugins`
 2. download latest Bright Data SDK xcframework
 3. put the framework under `Example/ThirdParty/BrightSdk` folder
+4. for Win64, place `lum_sdk64.dll` and `net_updater64.exe` in the same folder or update `Source/Example/Example.Build.cs` to stage it from a different location
 
 Now you can open the project.
 
@@ -241,10 +274,25 @@ OnChoiceChanged(EBrightSDKChoice NewChoice)
 
 ### Public Methods
 
+#### WindowsPreInit (windows only)
+
+Required to run before calling TryInitialize() on Windows.
+It is safe to call on other platforms, you do not have to check the platform yourself.
+
+```C++
+UFUNCTION(BlueprintCallable, Category="BrightSDK")
+void WindowsPreInit(const FString& AppId,
+                    const FString& AppName) const;
+```
+
+| Parameter | Description |
+|---|---|
+| `AppId` | Unique reverse-domain identifier for your application (e.g. `com.example.myapp`). Make sure your app is registered in BrightData CP, otherwise the SDK will not start.|
+| `AppName` | Name of your app/game.|
+
 #### TryInitialize
 
 Initializes the SDK with optional UI strings and flags.
-
 
 ```C++
 UFUNCTION(BlueprintCallable, Category="BrightSDK")
@@ -256,6 +304,16 @@ int64 TryInitialize(const FString& Benefit,
                     bool SkipConsent,
                     const FString& Campaign) const;
 ```
+
+| Parameter | Description |
+|---|---|
+| `Benefit` | Unique reverse-domain identifier for your application (e.g. `com.example.myapp`). Make sure your app is registered in BrightData CP, otherwise the SDK will not start.|
+| `AgreeButton` | Consent screen “agree” button text.|
+| `DisagreeButton` | Consent screen “disagree” button text.|
+| `OptOutInstructions` | Instructions on how to opt-out.|
+| `AppIconNameOrPath` | Path to the icon of your app (used in the consent screen).|
+| `SkipConsent` | Сan be passed to skip showing the consent screen on the initialization of the API. The consent screen can be shown later with the `ShowConsent` method.|
+| `Campaign` | Name of campaign (if applicable).|
 
 #### GetVersion
 
