@@ -18,18 +18,6 @@ Branch: main
 - iOS/tvOS Bright Data SDK as brdsdk.xcframework (for iOS/tvOS builds)
 - Bright Data Windows C/C++ SDK as lum_sdk64.dll/net_updater64.exe (for Windows builds)
 
-## Current Repository State
-
-### .gitignore
-
-The repository includes a standard ignore file intended for source-control hygiene.
-
-### License
-
-`LICENSE` is MIT License with copyright:
-
-- Copyright (c) 2026 BrightSDK
-
 ## Installation
 
 ### Add plugin
@@ -224,9 +212,9 @@ Now you can open the project.
 
 ## API details
 
-> String conventions:
->
-> Empty FString is considered as null pointer.
+### String conventions
+
+- Empty FString is considered as null pointer.
 
 ### Enums
 
@@ -251,10 +239,12 @@ Result of checks of availability of using SDK.
 
 > Internally mapped from SDK negative raw status codes.
 
-- Authorized
-- SdkNotInitialized
-- ParentControlEnabled
-- Unknown
+| Parameter | Note |
+|---|---|
+| `Authorized` | SDK is fully authorized to run at full capacity.|
+| `SdkNotInitialized` | SDK was not properly initialized.|
+| `ParentControlEnabled` | iOS/tvOS only|
+| `Unknown` | Platform not supported or experienced some unexpected error.|
 
 ### Events (Delegates)
 
@@ -401,3 +391,9 @@ Adds unique tracking id for reports and debugging.
 UFUNCTION(BlueprintCallable, Category="BrightSDK")
 void SetTrackingId(const FString& TrackingId) const;
 ```
+
+## License
+
+`LICENSE` is MIT License with copyright:
+
+- Copyright (c) 2026 BrightSDK
