@@ -307,7 +307,7 @@ int64 TryInitialize(const FString& Benefit,
 
 | Parameter | Description |
 |---|---|
-| `Benefit` | Unique reverse-domain identifier for your application (e.g. `com.example.myapp`). Make sure your app is registered in BrightData CP, otherwise the SDK will not start.|
+| `Benefit` | Benefit text which is used in the consent screen (first sentence).|
 | `AgreeButton` | Consent screen “agree” button text.|
 | `DisagreeButton` | Consent screen “disagree” button text.|
 | `OptOutInstructions` | Instructions on how to opt-out.|
