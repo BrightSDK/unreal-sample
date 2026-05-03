@@ -11,4 +11,10 @@ public:
 	/** IModuleInterface implementation */
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
+
+private:
+
+#if PLATFORM_WINDOWS
+	void* SdkHandle = nullptr;
+#endif
 };

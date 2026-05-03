@@ -2,17 +2,36 @@
 
 #include "BrightSDK.h"
 
+#if PLATFORM_WINDOWS
+#include "Interfaces/IPluginManager.h"
+#include "HAL/PlatformProcess.h"
+#include "Misc/Paths.h"
+#endif
+
 #define LOCTEXT_NAMESPACE "FBrightSDKModule"
 
 void FBrightSDKModule::StartupModule()
 {
-	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
+#if PLATFORM_WINDOWS
+	FString DllDir = FPaths::Combine(
+		IPluginManager::Get().FindPlugin(TEXT("BrightSDK"))->GetBaseDir(),
+		TEXT("ThirdParty/Win64"));
+	FPlatformProcess::PushDllDirectory(*DllDir);
+	SdkHandle = FPlatformProcess::GetDllHandle(
+		*FPaths::Combine(DllDir, TEXT("lum_sdk64.dll")));
+	FPlatformProcess::PopDllDirectory(*DllDir);
+#endif
 }
 
 void FBrightSDKModule::ShutdownModule()
 {
-	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
-	// we call this function before unloading the module.
+#if PLATFORM_WINDOWS
+	if (SdkHandle)
+	{
+		FPlatformProcess::FreeDllHandle(SdkHandle);
+		SdkHandle = nullptr;
+	}
+#endif
 }
 
 #undef LOCTEXT_NAMESPACE

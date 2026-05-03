@@ -23,21 +23,30 @@ public class BrightSDK : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
+				"Projects",
 			}
 		);
 
-		string brightSdkDir = Path.GetFullPath(Path.Combine(ModuleDirectory, "../../../../ThirdParty/BrightSdk"));
+		string thirdPartyDir = Path.Combine(PluginDirectory, "ThirdParty");
 
 		if (Target.Platform == UnrealTargetPlatform.IOS || Target.Platform == UnrealTargetPlatform.TVOS)
 		{
 			PublicAdditionalFrameworks.Add(
 				new Framework(
 					"brdsdk",
-					Path.Combine(brightSdkDir, "brdsdk.xcframework"),
+					Path.Combine(thirdPartyDir, "iOS", "brdsdk.xcframework"),
 					"",
 					true
 				)
 			);
+		}
+		else if (Target.Platform == UnrealTargetPlatform.Win64)
+		{
+			string win64Dir = Path.Combine(thirdPartyDir, "Win64");
+
+			PublicDelayLoadDLLs.Add("lum_sdk64.dll");
+			RuntimeDependencies.Add(Path.Combine(win64Dir, "lum_sdk64.dll"));
+			RuntimeDependencies.Add(Path.Combine(win64Dir, "net_updater64.exe"));
 		}
 
 	}

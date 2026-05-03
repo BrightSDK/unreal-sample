@@ -6,6 +6,7 @@
 
 #include "Async/Async.h"
 #include "HAL/PlatformProcess.h"
+#include "Interfaces/IPluginManager.h"
 #include "Misc/Paths.h"
 
 #if PLATFORM_IOS || PLATFORM_TVOS
@@ -134,9 +135,14 @@ namespace
     static FString GetWin64DllPath()
     {
         const TArray<FString> CandidatePaths = {
+            // 1. Plugin ThirdParty bundle (self-contained package — preferred)
+            FPaths::ConvertRelativePathToFull(FPaths::Combine(
+                IPluginManager::Get().FindPlugin(TEXT("BrightSDK"))->GetBaseDir(),
+                TEXT("ThirdParty/Win64/lum_sdk64.dll"))),
+            // 2. Staged binary dir (packaged game)
             FPaths::Combine(FPlatformProcess::BaseDir(), TEXT("lum_sdk64.dll")),
+            // 3. Legacy external ThirdParty location (backward compat)
             FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectDir(), TEXT("ThirdParty"), TEXT("BrightSdk"), TEXT("lum_sdk64.dll"))),
-            FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectPluginsDir(), TEXT("BrightSDK"), TEXT("Binaries"), TEXT("Win64"), TEXT("lum_sdk64.dll")))
         };
 
         for (const FString& CandidatePath : CandidatePaths)
