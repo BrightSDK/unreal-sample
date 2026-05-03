@@ -21,6 +21,14 @@ jobs:
         id: version
         run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
 
+      - name: Download SDK binaries
+        run: |
+          chmod +x install_bright_sdk.sh
+          # Pin exact versions derived from the tag, or use latest
+          ./install_bright_sdk.sh
+          echo "ThirdParty contents:"
+          find BrightSDK/ThirdParty -type f | sed 's|^|  |'
+
       - name: Stage plugin files
         run: |
           PLUGIN_DIR="dist/BrightSDK"
@@ -30,13 +38,7 @@ jobs:
           cp -r BrightSDK/BrightSDK.uplugin  "$PLUGIN_DIR/"
           cp -r BrightSDK/Resources           "$PLUGIN_DIR/"
           cp -r BrightSDK/Source              "$PLUGIN_DIR/"
-
-          # ThirdParty binaries (must be present in the repo or fetched from SDK build artifacts)
-          if [ -d "BrightSDK/ThirdParty" ]; then
-            cp -r BrightSDK/ThirdParty "$PLUGIN_DIR/"
-          else
-            echo "::warning::BrightSDK/ThirdParty not found — zip will not contain SDK binaries"
-          fi
+          cp -r BrightSDK/ThirdParty          "$PLUGIN_DIR/"
 
       - name: Stamp version into .uplugin
         run: |
